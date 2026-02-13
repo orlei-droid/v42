@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Painel V-42{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+
+<body class="{{ perfil.tema_ativo if perfil and perfil.tema_ativo else '' }}">
+  <header class="navbar">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <a class="brand" href="{{ url_for('index') }}">Célula V‑42</a>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('index') }}">Início</a></li>
+        <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('missoes') }}">Missões</a></li>
+        <li><a href="{{ url_for('loja') }}">Loja</a></li>
+        <li><a href="{{ url_for('historico') }}">Histórico</a></li>
+        <li><a href="{{ url_for('configuracoes') }}">⚙️ Config</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="flash {{ category }}">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+  </div>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+    // Auto-dismiss flash messages
+    setTimeout(() => {
+      const flashes = document.querySelectorAll('.flash');
+      flashes.forEach(f => {
+        f.style.opacity = '0';
+        setTimeout(() => f.remove(), 500);
+      });
+    }, 4000);
+
+    // Confetti effect if "LEVEL UP" or "Concluída" is in flash
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    const msgText = "{{ messages[0] }}";
+    if (msgText.includes("LEVEL UP") || msgText.includes("concluída")) {
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#8B5CF6', '#00F5A0', '#FACC15']
+      });
+    }
+    {% endif %}
+    {% endwith %}
+  </script>
+</body>
+
+</html>

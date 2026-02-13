@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}Loja V-42{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="header-info">
+        <h1>Loja de Recompensas</h1>
+        <p>Gaste suas moedas em upgrades visuais e recompensas.</p>
+    </div>
+
+    <!-- Mini Wallet Display -->
+    <div class="wallet-display"
+        style="background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 12px; border: 1px solid var(--gold);">
+        <span style="color: var(--gold); font-weight: 800; font-size: 1.5rem;">
+            {{ perfil.moedas }} 🪙
+        </span>
+    </div>
+</div>
+
+<div class="shop-grid">
+    {% for item in itens %}
+    <div class="card shop-item {{ 'owned' if item.id in perfil.get('inventario', []) else '' }}">
+        <div class="shop-item-header">
+            <h3 class="{{ item.css_class if item.tipo == 'tema' else '' }}">{{ item.nome }}</h3>
+            <span class="item-type">{{ item.tipo|upper }}</span>
+        </div>
+
+        <p class="item-desc">{{ item.descricao }}</p>
+
+        <div class="shop-actions">
+            <!-- Lógica para Consumíveis (Caixa Misteriosa) -->
+            {% if item.tipo == 'consumivel' %}
+            <a href="{{ url_for('comprar', item_id=item.id) }}" class="btn-small btn-buy"
+                style="background: linear-gradient(45deg, #FF00FF, #00FFFF); color: white;">
+                Arriscar ({{ item.preco }} 🪙)
+            </a>
+
+            <!-- Lógica para Itens já comprados -->
+            {% elif item.id in perfil.get('inventario', []) or item.id == 'tema_default' %}
+            {% if item.tipo == 'tema' %}
+            {% if perfil.get('tema_ativo') == item.id or (item.id == 'tema_default' and not perfil.get('tema_ativo')) %}
+            <button class="btn-small" disabled style="opacity: 0.5; cursor: default;">Equipado</button>
+            {% else %}
+            <a href="{{ url_for('equipar', item_id=item.id) }}" class="btn-small btn-equip">Equipar</a>
+            {% endif %}
+            {% else %}
+            <button class="btn-small" disabled>Comprado</button>
+            {% endif %}
+
+            <!-- Lógica para Itens não comprados -->
+            {% else %}
+            {% if perfil.moedas >= item.preco %}
+            <a href="{{ url_for('comprar', item_id=item.id) }}" class="btn-small btn-buy">
+                Comprar ({{ item.preco }} 🪙)
+            </a>
+            {% else %}
+            <button class="btn-small" disabled style="opacity: 0.5; cursor: not-allowed;">
+                {{ item.preco }} 🪙
+            </button>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .shop-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .shop-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s;
+    }
+
+    .shop-item.owned {
+        border-color: rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .shop-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .item-type {
+        font-size: 0.7rem;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #aaa;
+    }
+
+    .item-desc {
+        color: #bbb;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+    }
+
+    .btn-buy {
+        background: var(--gold);
+        color: black;
+        width: 100%;
+        border: none;
+    }
+
+    .btn-buy:hover {
+        background: #ffe066;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(250, 204, 21, 0.3);
+    }
+
+    .btn-equip {
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        width: 100%;
+    }
+
+    .btn-equip:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    /* Previews de Cores nos Títulos */
+    .theme-matrix {
+        color: #00FF00 !important;
+        text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    }
+
+    .theme-crimson {
+        color: #FF0000 !important;
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    }
+
+    .theme-ice {
+        color: #00FFFF !important;
+        text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    }
+</style>
+{% endblock %}

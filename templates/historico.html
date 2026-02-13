@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Histórico de Ações</h2>
+
+<div class="filter-bar">
+  <input type="text" id="search" placeholder="Buscar logs...">
+  <div class="checkbox-group">
+    <label><input type="checkbox" class="action-filter" value="Criou missão" checked> Criou</label>
+    <label><input type="checkbox" class="action-filter" value="Concluiu missão" checked> Concluiu</label>
+    <label><input type="checkbox" class="action-filter" value="Editou missão" checked> Editou</label>
+    <label><input type="checkbox" class="action-filter" value="Excluiu missão" checked> Excluiu</label>
+    <label><input type="checkbox" class="action-filter" value="Comprou item" checked> Loja</label>
+  </div>
+  <button id="toggleMode" class="btn-small">Modo: Incluir</button>
+</div>
+
+<div class="log-list" id="log-body">
+  {% for log in logs %}
+  <div class="log-item card" data-acao="{{ log['acao'] }}" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; margin-bottom: 0.8rem; border-left: 4px solid 
+       {% if 'Criou' in log['acao'] %}var(--accent)
+       {% elif 'Concluiu' in log['acao'] %}var(--primary)
+       {% elif 'Editou' in log['acao'] %}var(--gold)
+       {% elif 'Excluiu' in log['acao'] %}var(--danger)
+       {% elif 'Comprou' in log['acao'] %}#d946ef
+       {% else %}#aaa{% endif %};">
+
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span style="font-size: 1.5rem;">
+        {% if 'Criou' in log['acao'] %}✨
+        {% elif 'Concluiu' in log['acao'] %}✅
+        {% elif 'Editou' in log['acao'] %}✏️
+        {% elif 'Equipou' in log['acao'] %}👕
+        {% elif 'Excluiu' in log['acao'] %}🗑️
+        {% elif 'Comprou' in log['acao'] %}🛍️
+        {% else %}📝{% endif %}
+      </span>
+      <div>
+        <div style="font-weight: 700; color: white; margin-bottom: 0.2rem;">{{ log['acao'] }}</div>
+        <div style="font-size: 0.9rem; color: #ccc;">{{ log['resultado'] }}</div>
+      </div>
+    </div>
+    <div style="font-size: 0.8rem; color: #888; font-family: monospace;">
+      {{ log['data'] }}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Removed table structure -->
+
+<p id="feedback" style="margin-top:12px;color:#aaa; text-align: center;"></p>
+
+<script>
+  const search = document.getElementById('search');
+  const checkboxes = document.querySelectorAll('.action-filter');
+  // Updated selector to match new class
+  const logRows = document.getElementsByClassName('log-item');
+  const feedback = document.getElementById('feedback');
+  const toggleBtn = document.getElementById('toggleMode');
+  let mode = 'incluir';
+
+  function filtrar() {
+    const texto = search.value.toLowerCase();
+    const selecionados = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+    let visiveis = 0;
+
+    Array.from(logRows).forEach(row => {
+      const conteudo = row.textContent.toLowerCase();
+      const acao = row.getAttribute('data-acao');
+
+      // Check if action matches any filter key (simple substring match for robustness)
+      const correspondeTipo = selecionados.some(sel => acao.includes(sel));
+      const correspondeTexto = conteudo.includes(texto);
+
+      let mostrar = (mode === 'incluir') ? (correspondeTexto && correspondeTipo) : (correspondeTexto && !correspondeTipo);
+      row.style.display = mostrar ? 'flex' : 'none'; // Flex because of inline style
+      if (mostrar) visiveis++;
+    });
+
+    feedback.textContent = visiveis ? `Found ${visiveis} logs` : 'Nenhum log encontrado.';
+  }
+
+  search.addEventListener('input', filtrar);
+  checkboxes.forEach(cb => cb.addEventListener('change', filtrar));
+  toggleBtn.addEventListener('click', () => {
+    mode = (mode === 'incluir') ? 'excluir' : 'incluir';
+    toggleBtn.textContent = "Modo: " + (mode === 'incluir' ? 'Incluir' : 'Excluir');
+    filtrar();
+  });
+</script>
+{% endblock %}

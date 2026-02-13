@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Editar Missão — Célula V‑42{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Editar Missão</h1>
+  <form method="post" class="form-inline" style="display: flex; flex-direction: column; gap: 1rem;">
+    <div>
+      <label style="color: var(--fg); margin-bottom: 0.5rem; display: block;">Título:</label>
+      <input type="text" name="novo_titulo" value="{{ missao.titulo }}" required style="width: 100%;">
+    </div>
+
+    <div>
+      <label style="color: var(--fg); margin-bottom: 0.5rem; display: block;">Tag:</label>
+      <select name="tag_nome" id="tag_select_edit"
+        style="width: 100%; padding: 0.8rem; background: var(--bg-card); color: var(--fg); border: 1px solid var(--primary); border-radius: 8px;">
+        <option value="">Sem Tag</option>
+        {% if perfil.tags %}
+        {% for tag in perfil.tags %}
+        <option value="{{ tag.nome }}" data-cor="{{ tag.cor }}" {% if missao.tag and missao.tag.nome==tag.nome
+          %}selected{% endif %}>
+          {{ tag.nome }}
+        </option>
+        {% endfor %}
+        {% endif %}
+      </select>
+      <input type="hidden" name="tag_cor" id="tag_cor_input_edit">
+
+      <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">
+        Selecione "Sem Tag" para remover a tag desta missão.
+      </p>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Salvar</button>
+    <a href="{{ url_for('missoes') }}" class="btn-small">Cancelar</a>
+  </form>
+</div>
+
+<script>
+  // Script to update hidden color input when tag is selected
+  const tagSelectEdit = document.getElementById('tag_select_edit');
+  const tagCorInputEdit = document.getElementById('tag_cor_input_edit');
+
+  function updateTagColorEdit() {
+    const selectedOption = tagSelectEdit.options[tagSelectEdit.selectedIndex];
+    const color = selectedOption.getAttribute('data-cor');
+    tagCorInputEdit.value = color || "";
+  }
+
+  tagSelectEdit.addEventListener('change', updateTagColorEdit);
+  updateTagColorEdit();
+</script>
+{% endblock %}

@@ -1,0 +1,78 @@
+[
+  {
+    "titulo": "(PC) Organizar Pasta de Posts Postados",
+    "status": "concluída"
+  },
+  {
+    "titulo": "(PC) Organizar Pasta de Ideias Social Media",
+    "status": "concluída"
+  },
+  {
+    "titulo": "(PC) Organizar Pasta de Post Criado",
+    "status": "concluída"
+  },
+  {
+    "titulo": "(PC) Organizar Pasta Imagens e vídeos.",
+    "status": "concluída"
+  },
+  {
+    "titulo": "(PC) Organizar Pasta de Arquivos de Contigência",
+    "status": "concluída"
+  },
+  {
+    "titulo": "(PC) Organizar Pasta de Campenhas de Tráfego",
+    "status": "concluída"
+  },
+  {
+    "titulo": "(PC) Organizar Pasta de Feedback e Engajamento",
+    "status": "concluída"
+  },
+  {
+    "titulo": "(APP) Testar Funcionabilidade de Status \"Em Andamento\"",
+    "status": "concluída"
+  },
+  {
+    "titulo": "(APP) Implementar e Testar Botão Iniciar na Aba Missões",
+    "status": "concluída"
+  },
+  {
+    "titulo": "(PROXYBR) Comprar 3 IPs Proxy Para Dolphin",
+    "status": "em_andamento"
+  },
+  {
+    "titulo": "(DOLPHIN) Conectar Proxy no Dolphin",
+    "status": "em_andamento"
+  },
+  {
+    "titulo": "(DOLPHIN) Configurar +2 Perfis Contigencia",
+    "status": "aberta"
+  },
+  {
+    "titulo": "(DOLPHIN) Aquecer Perfis Pessoais da Contigencia",
+    "status": "aberta"
+  },
+  {
+    "titulo": "(wppBUSINESS) Aquecer Whatsapp",
+    "status": "aberta"
+  },
+  {
+    "titulo": "(META ADS) Configurar Conta de Anúncios 01",
+    "status": "aberta"
+  },
+  {
+    "titulo": "(META ADS) Configurar Conta de Anúncios 02",
+    "status": "aberta"
+  },
+  {
+    "titulo": "(META ADS) Configurar Conta de Anúncios 03",
+    "status": "aberta"
+  },
+  {
+    "titulo": "(BELVANA) Criar Página Empresarial no Instagram e Facebook",
+    "status": "aberta"
+  },
+  {
+    "titulo": "(TRÁFEGO) Planejar Primeira Campanha de Engajamento",
+    "status": "aberta"
+  }
+]

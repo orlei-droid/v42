@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Configurações - FuryCelula{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="color: var(--primary); margin-bottom: 2rem;">⚙️ Configurações</h1>
+
+    <!-- Tag Management Section -->
+    <section class="card" style="margin-bottom: 2rem;">
+        <h2 style="color: var(--fg); margin-bottom: 1rem;">🏷️ Gerenciar Tags</h2>
+
+        <div style="margin-bottom: 1.5rem;">
+            <h3 style="color: var(--fg); font-size: 1rem; margin-bottom: 0.5rem;">Tags Existentes:</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                {% if perfil.tags %}
+                {% for tag in perfil.tags %}
+                <div
+                    style="display: flex; align-items: center; background: #1a1a1a; padding: 6px 10px; border-radius: 4px; border: 1px solid {{ tag.cor }};">
+                    <span
+                        style="width: 12px; height: 12px; border-radius: 50%; background: {{ tag.cor }}; margin-right: 8px;"></span>
+                    <span style="color: white; font-size: 0.9rem; margin-right: 8px;">{{ tag.nome }}</span>
+                    <a href="{{ url_for('deletar_tag', nome=tag.nome) }}"
+                        style="color: #ef4444; text-decoration: none; font-weight: bold; font-size: 1.2rem; line-height: 1; cursor: pointer;"
+                        onclick="return confirm('Deletar tag \'{{ tag.nome }}\'?')">&times;</a>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p style="color: #666; font-size: 0.9rem;">Nenhuma tag criada.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <form action="{{ url_for('deletar_todas_tags') }}" method="POST" style="margin-top: 1rem;">
+            <button type="submit" class="btn-small" style="background: #ef4444; border-color: #ef4444;"
+                onclick="return confirm('⚠️ ATENÇÃO: Isso vai deletar TODAS as tags. As missões vão manter suas tags, mas você não poderá criar novas missões com essas tags. Continuar?')">
+                🗑️ Deletar Todas as Tags
+            </button>
+        </form>
+    </section>
+
+    <!-- Danger Zone -->
+    <section class="card" style="border: 2px solid #ef4444;">
+        <h2 style="color: #ef4444; margin-bottom: 1rem;">⚠️ Zona de Perigo</h2>
+        <p style="color: #999; margin-bottom: 1.5rem;">
+            Essas ações são <strong>irreversíveis</strong> e vão apagar seus dados permanentemente.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Reset Missions & History -->
+            <div>
+                <h3 style="color: var(--fg); font-size: 1rem; margin-bottom: 0.5rem;">Resetar Missões e Histórico</h3>
+                <p style="color: #666; font-size: 0.85rem; margin-bottom: 0.5rem;">
+                    Apaga todas as missões e o histórico. <strong>Mantém</strong> seu progresso (Nível, XP, Moedas,
+                    Inventário, Tags).
+                </p>
+                <form action="{{ url_for('resetar_tudo') }}" method="POST">
+                    <button type="submit" class="btn-small" style="background: #f59e0b; border-color: #f59e0b;"
+                        onclick="return confirm('⚠️ Isso vai deletar todas as missões e o histórico. Seu progresso (XP, Nível, Moedas) será mantido. Continuar?')">
+                        🔄 Resetar Missões e Histórico
+                    </button>
+                </form>
+            </div>
+
+            <!-- Reset Progress Only -->
+            <div>
+                <h3 style="color: var(--fg); font-size: 1rem; margin-bottom: 0.5rem;">Resetar Apenas Progresso</h3>
+                <p style="color: #666; font-size: 0.85rem; margin-bottom: 0.5rem;">
+                    Volta ao nível 1 com 0 XP e 0 moedas. <strong>Mantém</strong> missões, histórico, inventário e tags.
+                </p>
+                <form action="{{ url_for('resetar_progresso') }}" method="POST">
+                    <button type="submit" class="btn-small" style="background: #f59e0b; border-color: #f59e0b;"
+                        onclick="return confirm('⚠️ Você perderá todo seu progresso (Nível, XP, Moedas). Missões e histórico serão mantidos. Continuar?')">
+                        📉 Resetar Progresso
+                    </button>
+                </form>
+            </div>
+
+            <!-- Delete Everything -->
+            <div>
+                <h3 style="color: var(--fg); font-size: 1rem; margin-bottom: 0.5rem;">💀 DELETAR TUDO</h3>
+                <p style="color: #666; font-size: 0.85rem; margin-bottom: 0.5rem;">
+                    Apaga <strong>ABSOLUTAMENTE TUDO</strong>: missões, histórico, progresso, inventário, tags. Volta ao
+                    zero absoluto.
+                </p>
+                <form action="{{ url_for('deletar_tudo') }}" method="POST">
+                    <button type="submit" class="btn-small" style="background: #dc2626; border-color: #dc2626;"
+                        onclick="return confirm('🚨 ÚLTIMA CHANCE: Isso vai DELETAR TUDO (missões, histórico, XP, moedas, inventário, tags). Não tem volta. Tem CERTEZA ABSOLUTA?')">
+                        💀 DELETAR TUDO
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <div style="margin-top: 2rem;">
+        <a href="{{ url_for('dashboard') }}" class="btn-small">← Voltar ao Dashboard</a>
+    </div>
+</div>
+{% endblock %}

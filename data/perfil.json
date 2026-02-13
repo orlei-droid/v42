@@ -1,0 +1,16 @@
+{
+  "nivel": 4,
+  "xp": 151,
+  "xp_proximo_nivel": 172,
+  "moedas": 19999665,
+  "streak": 0,
+  "dias_concluidos": [],
+  "inventario": [
+    "tema_matrix",
+    "tema_zen",
+    "tema_ice",
+    "tema_crimson"
+  ],
+  "tema_ativo": "tema_crimson",
+  "tags": []
+}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+  <h2 style="color: var(--fg);">Gerenciar Missões</h2>
+
+  <form method="get" class="filtro-container"
+    style="background: rgba(255,255,255,0.05); padding: 0.5rem 1rem; border-radius: 12px;">
+    <label for="status" style="margin-right: 10px; color: #a1a1aa;">Filtrar:</label>
+    <select name="status" id="status" class="filtro-status" onchange="this.form.submit()"
+      style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 4px 8px; border-radius: 6px;">
+      <option value="" {% if status_filtro=='' %}selected{% endif %} style="background: #1a1a1a;">Todas</option>
+      <option value="aberta" {% if status_filtro=='aberta' %}selected{% endif %} style="background: #1a1a1a;">Abertas
+      </option>
+      <option value="em_andamento" {% if status_filtro=='em_andamento' %}selected{% endif %}
+        style="background: #1a1a1a;">Em Andamento</option>
+      <option value="concluída" {% if status_filtro=='concluída' %}selected{% endif %} style="background: #1a1a1a;">
+        Concluídas</option>
+    </select>
+  </form>
+</div>
+
+<form method="post" class="mission-form" style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 2rem;">
+  <select name="tag_nome" id="tag_select_missoes"
+    style="max-width: 150px; padding: 0.8rem; background: var(--bg-card); color: var(--fg); border: 1px solid var(--primary); border-radius: 8px;">
+    <option value="">Sem Tag</option>
+    {% if perfil.tags %}
+    {% for tag in perfil.tags %}
+    <option value="{{ tag.nome }}" data-cor="{{ tag.cor }}">{{ tag.nome }}</option>
+    {% endfor %}
+    {% endif %}
+  </select>
+  <input type="hidden" name="tag_cor" id="tag_cor_input_missoes">
+
+  <a href="{{ url_for('configuracoes') }}" class="btn-small"
+    style="background: var(--bg-card); border: 1px solid var(--primary); color: var(--primary); padding: 0.8rem; text-decoration: none; display: inline-block;">⚙️</a>
+
+  <input type="text" name="nova_missao" placeholder="Nova missão..." required autocomplete="off" style="flex-grow: 1;">
+  <button type="submit" class="btn-small btn-primary">Adicionar</button>
+</form>
+
+<script>
+  // Script to update hidden color input when tag is selected
+  const tagSelectMissoes = document.getElementById('tag_select_missoes');
+  const tagCorInputMissoes = document.getElementById('tag_cor_input_missoes');
+
+  function updateTagColorMissoes() {
+    const selectedOption = tagSelectMissoes.options[tagSelectMissoes.selectedIndex];
+    const color = selectedOption.getAttribute('data-cor');
+    tagCorInputMissoes.value = color || "";
+  }
+
+  tagSelectMissoes.addEventListener('change', updateTagColorMissoes);
+  updateTagColorMissoes();
+</script>
+
+<ul class="list">
+  {% for m in missoes %}
+  <li class="{% if m.status == 'concluída' %}concluida{% endif %}">
+    <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+      <span style="color: rgba(255,255,255,0.3); font-family: monospace; flex-shrink: 0;">{{ loop.index }}.</span>
+      <span class="mission-title" style="display: flex; align-items: center; gap: 0.5rem;">
+        {% if m.tag %}
+        <span
+          style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: {{ m.tag.cor }};"
+          title="{{ m.tag.nome }}"></span>
+        <span style="color: {{ m.tag.cor }}; font-size: 0.85rem; font-weight: 600;">({{ m.tag.nome }})</span>
+        {% endif %}
+        {{ m.titulo }}
+      </span>
+      {% if m.status == 'em_andamento' %}
+      <span style="color: #fbbf24; font-size: 0.75rem; margin-left: 0.5rem;">⏳ Em Andamento</span>
+      {% endif %}
+    </div>
+
+    <div style="display: flex; gap: 0.5rem;">
+      {% if m.status != 'concluída' %}
+      <a href="{{ url_for('registrar_progresso', i=loop.index0) }}" class="btn-action"
+        style="background: var(--primary); color: var(--bg); position: relative; box-shadow: 0 0 20px var(--primary); font-weight: 600;"
+        {% if m.registros
+        %}title="Últimos registros: {% for r in m.registros[-3:] %}{{ r.data[:16] }}{% if not loop.last %}, {% endif %}{% endfor %}"
+        {% endif %}>
+        ✓ Registrar
+        {% if m.registros %}
+        <span
+          style="position: absolute; top: -8px; right: -8px; background: #10b981; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; border: 2px solid var(--bg);">{{
+          m.registros|length }}</span>
+        {% endif %}
+      </a>
+      <a href="/concluir/{{ loop.index0 }}" class="btn-action btn-concluir">Concluir</a>
+      {% else %}
+      <span style="color: var(--accent); font-weight: bold;">✔ Completa</span>
+      {% endif %}
+      <a href="/editar/{{ loop.index0 }}" class="btn-action btn-editar">Editar</a>
+      <a href="/apagar/{{ loop.index0 }}" class="btn-action btn-excluir">Excluir</a>
+    </div>
+    <!-- Reordenar -->
+    <div style="display: flex; flex-direction: column; gap: 2px; margin-left: 8px;">
+      <a href="{{ url_for('mover_missao', i=loop.index0, direcao='cima') }}" class="setinha"
+        style="font-size: 0.6rem; padding: 2px 6px; height: auto;">▲</a>
+      <a href="{{ url_for('mover_missao', i=loop.index0, direcao='baixo') }}" class="setinha"
+        style="font-size: 0.6rem; padding: 2px 6px; height: auto;">▼</a>
+    </div>
+    </div>
+  </li>
+  {% else %}
+  <div style="text-align: center; padding: 2rem; opacity: 0.5;">
+    Nenhuma missão encontrada para este filtro.
+  </div>
+  {% endfor %}
+</ul>
+
+{% endblock %}
